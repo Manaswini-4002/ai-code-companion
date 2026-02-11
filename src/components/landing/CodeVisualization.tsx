@@ -24,14 +24,14 @@ export const CodeVisualization = () => {
     <div className="relative w-full max-w-lg mx-auto">
       <div className="absolute -inset-1 bg-gradient-to-r from-neon-blue/20 via-neon-purple/20 to-neon-cyan/20 rounded-xl blur-xl" />
       <div className="relative bg-card border border-border rounded-xl overflow-hidden">
-        {/* Window chrome */}
+        {/* Window chrome  */}
         <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
           <div className="w-3 h-3 rounded-full bg-neon-red/80" />
           <div className="w-3 h-3 rounded-full bg-neon-amber/80" />
           <div className="w-3 h-3 rounded-full bg-neon-green/80" />
           <span className="ml-3 text-xs text-muted-foreground font-mono">review.ts</span>
         </div>
-        {/* Code area */}
+        {/* code area */}
         <div className="p-4 font-mono text-sm leading-relaxed h-72 overflow-hidden">
           <div className="animate-code-scroll">
             {[...codeLines, ...codeLines].map((line, i) => (
