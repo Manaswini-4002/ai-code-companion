@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Code2, LogOut, History, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import NetworkBackground from "@/components/NetworkBackground";
 
 const languages = ["Python", "JavaScript", "TypeScript", "Java", "C++", "Go", "Rust", "Ruby", "PHP", "C#"];
 const reviewTypes = [
@@ -74,8 +75,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="border-b border-border bg-card">
+    <div className="min-h-screen bg-background relative">
+      <NetworkBackground />
+      <nav className="border-b border-border bg-card/80 backdrop-blur-xl relative z-10">
         <div className="container flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
@@ -94,7 +96,7 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      <div className="container py-10 max-w-4xl">
+      <div className="container py-10 max-w-4xl relative z-10">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Code Review Dashboard</h1>
           <p className="text-muted-foreground">Paste your code below and let AI analyze it.</p>
@@ -105,7 +107,7 @@ const Dashboard = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium">Language</label>
               <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="bg-card/80 backdrop-blur"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {languages.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
                 </SelectContent>
@@ -114,7 +116,7 @@ const Dashboard = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium">Review Type</label>
               <Select value={reviewType} onValueChange={setReviewType}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="bg-card/80 backdrop-blur"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {reviewTypes.map((r) => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
                 </SelectContent>
@@ -122,7 +124,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <Card className="border-border">
+          <Card className="border-border bg-card/80 backdrop-blur-xl">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">Paste your code</CardTitle>
             </CardHeader>
@@ -131,7 +133,7 @@ const Dashboard = () => {
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="// Paste your code here..."
-                className="min-h-[300px] font-mono text-sm bg-background border-border resize-y"
+                className="min-h-[300px] font-mono text-sm bg-background/50 border-border resize-y"
               />
             </CardContent>
           </Card>

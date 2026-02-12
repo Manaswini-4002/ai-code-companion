@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Code2, ArrowLeft, Copy, Download, Shield, Bug, Zap, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import NetworkBackground from "@/components/NetworkBackground";
+import ComplexityChart from "@/components/ComplexityChart";
+import TestCaseGenerator from "@/components/TestCaseGenerator";
 
 interface Finding {
   type: "bug" | "security" | "performance" | "style";
@@ -96,10 +99,12 @@ const ReviewResults = () => {
   const errors = findings.filter((f) => f.severity === "error").length;
   const warnings = findings.filter((f) => f.severity === "warning").length;
   const infos = findings.filter((f) => f.severity === "info").length;
+  const linesOfCode = review.original_code.split("\n").length;
 
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="border-b border-border bg-card">
+    <div className="min-h-screen bg-background relative">
+      <NetworkBackground />
+      <nav className="border-b border-border bg-card/80 backdrop-blur-xl relative z-10">
         <div className="container flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
@@ -113,10 +118,10 @@ const ReviewResults = () => {
         </div>
       </nav>
 
-      <div className="container py-10 max-w-5xl">
+      <div className="container py-10 max-w-5xl relative z-10">
         {/* Summary */}
         <div className="grid sm:grid-cols-4 gap-4 mb-8">
-          <Card className="border-border">
+          <Card className="border-border bg-card/80 backdrop-blur">
             <CardContent className="pt-6 text-center">
               <div className={`text-4xl font-bold ${review.score >= 70 ? "text-neon-green" : review.score >= 40 ? "text-neon-amber" : "text-neon-red"}`}>
                 {review.score}/100
@@ -124,19 +129,19 @@ const ReviewResults = () => {
               <p className="text-sm text-muted-foreground mt-1">Overall Score</p>
             </CardContent>
           </Card>
-          <Card className="border-border">
+          <Card className="border-border bg-card/80 backdrop-blur">
             <CardContent className="pt-6 text-center">
               <div className="text-4xl font-bold text-neon-red">{errors}</div>
               <p className="text-sm text-muted-foreground mt-1">Errors</p>
             </CardContent>
           </Card>
-          <Card className="border-border">
+          <Card className="border-border bg-card/80 backdrop-blur">
             <CardContent className="pt-6 text-center">
               <div className="text-4xl font-bold text-neon-amber">{warnings}</div>
               <p className="text-sm text-muted-foreground mt-1">Warnings</p>
             </CardContent>
           </Card>
-          <Card className="border-border">
+          <Card className="border-border bg-card/80 backdrop-blur">
             <CardContent className="pt-6 text-center">
               <div className="text-4xl font-bold text-neon-blue">{infos}</div>
               <p className="text-sm text-muted-foreground mt-1">Suggestions</p>
@@ -145,7 +150,7 @@ const ReviewResults = () => {
         </div>
 
         {review.findings?.summary && (
-          <Card className="border-border mb-8">
+          <Card className="border-border bg-card/80 backdrop-blur mb-8">
             <CardHeader><CardTitle className="text-lg">Summary</CardTitle></CardHeader>
             <CardContent><p className="text-muted-foreground">{review.findings.summary}</p></CardContent>
           </Card>
@@ -154,6 +159,8 @@ const ReviewResults = () => {
         <Tabs defaultValue="findings" className="space-y-6">
           <TabsList className="bg-secondary">
             <TabsTrigger value="findings">Findings ({findings.length})</TabsTrigger>
+            <TabsTrigger value="complexity">Complexity</TabsTrigger>
+            <TabsTrigger value="tests">Test Cases</TabsTrigger>
             <TabsTrigger value="original">Original Code</TabsTrigger>
             <TabsTrigger value="rewritten">Rewritten Code</TabsTrigger>
           </TabsList>
@@ -167,7 +174,7 @@ const ReviewResults = () => {
               findings.map((f, i) => {
                 const Icon = typeIcons[f.type] || Bug;
                 return (
-                  <Card key={i} className="border-border">
+                  <Card key={i} className="border-border bg-card/80 backdrop-blur">
                     <CardContent className="pt-4 pb-4">
                       <div className="flex items-start gap-3">
                         <Icon className={`w-5 h-5 mt-0.5 ${f.severity === "error" ? "text-neon-red" : f.severity === "warning" ? "text-neon-amber" : "text-neon-blue"}`} />
@@ -190,8 +197,16 @@ const ReviewResults = () => {
             )}
           </TabsContent>
 
+          <TabsContent value="complexity">
+            <ComplexityChart findings={findings} score={review.score} linesOfCode={linesOfCode} />
+          </TabsContent>
+
+          <TabsContent value="tests">
+            <TestCaseGenerator code={review.original_code} language={review.language} />
+          </TabsContent>
+
           <TabsContent value="original">
-            <Card className="border-border">
+            <Card className="border-border bg-card/80 backdrop-blur">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">Original Code</CardTitle>
                 <Button variant="ghost" size="sm" onClick={() => copyCode(review.original_code)}>
@@ -199,13 +214,13 @@ const ReviewResults = () => {
                 </Button>
               </CardHeader>
               <CardContent>
-                <pre className="font-mono text-sm bg-background p-4 rounded-lg border border-border overflow-x-auto whitespace-pre-wrap">{review.original_code}</pre>
+                <pre className="font-mono text-sm bg-background/50 p-4 rounded-lg border border-border overflow-x-auto whitespace-pre-wrap">{review.original_code}</pre>
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="rewritten">
-            <Card className="border-border">
+            <Card className="border-border bg-card/80 backdrop-blur">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">Rewritten Code</CardTitle>
                 <div className="flex gap-2">
@@ -218,7 +233,7 @@ const ReviewResults = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <pre className="font-mono text-sm bg-background p-4 rounded-lg border border-border overflow-x-auto whitespace-pre-wrap">{review.rewritten_code || "No rewritten code available."}</pre>
+                <pre className="font-mono text-sm bg-background/50 p-4 rounded-lg border border-border overflow-x-auto whitespace-pre-wrap">{review.rewritten_code || "No rewritten code available."}</pre>
               </CardContent>
             </Card>
           </TabsContent>
